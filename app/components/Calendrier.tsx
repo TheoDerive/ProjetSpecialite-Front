@@ -1,20 +1,25 @@
 import React from "react";
 import { monthIndex } from "~/datas/usefullData";
-import { useEvenement } from "~/hooks/useEvenements";
+import { useEvenement, type EvenementType } from "~/hooks/useEvenements";
+import Evenement from "./Evenement";
+import EvenementInformation from "./EvenementInformation";
 
 export default function Calendrier() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
+  const [eventSelect, setEventSelect] = React.useState<EvenementType | false>(
+    false
+  );
 
-  const evenement = [
-    {
-      name: "test",
-      date: "2025-04-30",
-    },
-    {
-      name: "test",
-      date: "2025-03-21",
-    },
-  ];
+  const { data, isPending, error } = useEvenement.getEvenement({
+    resultParams: [],
+    filterParams: [],
+  });
+
+  const evenement: EvenementType[] = data || [];
+
+  function updateEventSelect(event: EvenementType | false) {
+    setEventSelect(event);
+  }
 
   // Creation du calendrier
   const getDaysInMonth = (year: number, month: number) => {
@@ -54,12 +59,11 @@ export default function Calendrier() {
     const currentMonthDays = Array.from({ length: daysInMonth }, (_, i) => ({
       date: i + 1,
       event: evenement.filter((event) => {
-        const eventMonth = event.date.split("-")[1];
-        const eventDay = event.date.split("-")[2];
+        const evenementDate = new Date(event.date);
 
         if (
-          Number(eventMonth) === currentDate.getMonth() + 1 &&
-          Number(eventDay) === i + 1
+          evenementDate.getMonth() === currentDate.getMonth() &&
+          evenementDate.getDay() - 1 === i + 1
         ) {
           return event;
         }
@@ -72,8 +76,6 @@ export default function Calendrier() {
   };
 
   const days = generateCalendar();
-
-  const {} = useEvenement.getEvenement({ resultParams: [], filterParams: []})
 
   // Gestion de la date
   function handlePrevMonth() {
@@ -133,10 +135,11 @@ export default function Calendrier() {
       <section className="calendrier">
         {days.map((day, index) => (
           <div
-            className={`calendrier-case ${(index < 14 && day.date > 14) || (index > 28 && day.date < 14)
+            className={`calendrier-case ${
+              (index < 14 && day.date > 14) || (index > 28 && day.date < 14)
                 ? "calendrier-case-inactive"
                 : ""
-              }`}
+            }`}
             id={index}
             key={index}
           >
@@ -145,12 +148,21 @@ export default function Calendrier() {
             ) : null}
             <div className="day-number">{day.date}</div>
 
-            {day.event.map((event) => (
-              <div>{event.name}</div>
-            ))}
+            <section className="evenements-container">
+              <div className="evenement-scroll-container">
+                {day.event.map((event, i) => (
+                  <Evenement
+                    updateEventSelect={updateEventSelect}
+                    evenement={event}
+                    key={i}
+                  />
+                ))}
+              </div>
+            </section>
           </div>
         ))}
       </section>
+      {eventSelect ? <EvenementInformation evenement={eventSelect} updateEvenementSelect={updateEventSelect}/> : null}
     </section>
   );
 }
