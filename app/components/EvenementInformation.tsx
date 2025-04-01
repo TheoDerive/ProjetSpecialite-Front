@@ -5,12 +5,12 @@ import { formatDate } from "~/utils/formatDate";
 
 export default function EvenementInformation({
   evenement,
-  updateEvenementSelect
+  updateEvenementSelect,
 }: {
   evenement: EvenementType;
-    updateEvenementSelect: (value: EvenementType | false) => void
+  updateEvenementSelect: (value: EvenementType | false) => void;
 }) {
-  const containerRef = React.useRef<HTMLElement>(null)
+  const containerRef = React.useRef<HTMLElement>(null);
 
   const date = new Date(evenement.date);
 
@@ -21,20 +21,20 @@ export default function EvenementInformation({
   const membresRoles: GetRoleType[] = data || [];
 
   function handleClick(event: MouseEvent) {
-    if(containerRef && !containerRef.current?.contains(event.target as Node)){
-      containerRef.current.classList.add("remove")
+    if (containerRef && !containerRef.current?.contains(event.target as Node)) {
+      containerRef.current.classList.add("remove");
 
-      setTimeout(()=> {
-        updateEvenementSelect(false)
-      }, 500)
+      setTimeout(() => {
+        updateEvenementSelect(false);
+      }, 500);
     }
   }
 
   React.useEffect(() => {
-    document.addEventListener("click", handleClick)
+    document.addEventListener("click", handleClick);
 
-    return () => document.removeEventListener("click", handleClick)
-  }, [])
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
 
   return (
     <section className="evenement-information-container" ref={containerRef}>
@@ -50,7 +50,7 @@ export default function EvenementInformation({
           {evenement.name}
         </h2>
         <p className="evenement-information-date">
-          {formatDate(date.getDay() - 1)}/{formatDate(date.getMonth() + 1)} -{" "}
+          {formatDate(date.getDate())}/{formatDate(date.getMonth() + 1)} -{" "}
           {date.getHours()}h{formatDate(date.getMinutes())}
         </p>
         <p className="evenement-information-adresse">{evenement.adresse}</p>
@@ -61,12 +61,18 @@ export default function EvenementInformation({
       <section className="evenement-information-membres-container">
         <h3>Membres</h3>
         {membresRoles.map((membreRole) =>
-          membreRole.is_valid ?
-          <article className="evenement-information-membre">
-            <img src={membreRole.membre.image_url} className="evenement-information-membre-image" />
-              <p>{membreRole.membre.firstname} {membreRole.membre.lastname} - {membreRole.Id_roles}</p>
-          </article>
-          : null
+          membreRole.is_valid ? (
+            <article className="evenement-information-membre">
+              <img
+                src={membreRole.membre.image_url}
+                className="evenement-information-membre-image"
+              />
+              <p>
+                {membreRole.membre.firstname} {membreRole.membre.lastname} -{" "}
+                {membreRole.Id_roles}
+              </p>
+            </article>
+          ) : null
         )}
       </section>
     </section>

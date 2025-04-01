@@ -15,9 +15,11 @@ export default function Calendrier() {
     filterParams: [],
   });
 
-  const evenement: EvenementType[] = data || [];
+  const evenements = data || [];
 
   function updateEventSelect(event: EvenementType | false) {
+    if(event !== false && eventSelect !== false) return 
+  
     setEventSelect(event);
   }
 
@@ -58,12 +60,12 @@ export default function Calendrier() {
     const prevMonthDays = getPreviousMonthDays(year, month, firstDay);
     const currentMonthDays = Array.from({ length: daysInMonth }, (_, i) => ({
       date: i + 1,
-      event: evenement.filter((event) => {
+      event: evenements.filter((event) => {
         const evenementDate = new Date(event.date);
 
         if (
           evenementDate.getMonth() === currentDate.getMonth() &&
-          evenementDate.getDay() - 1 === i + 1
+          evenementDate.getDate() === i + 1
         ) {
           return event;
         }
@@ -162,7 +164,12 @@ export default function Calendrier() {
           </div>
         ))}
       </section>
-      {eventSelect ? <EvenementInformation evenement={eventSelect} updateEvenementSelect={updateEventSelect}/> : null}
+      {eventSelect ? (
+        <EvenementInformation
+          evenement={eventSelect}
+          updateEvenementSelect={updateEventSelect}
+        />
+      ) : null}
     </section>
   );
 }

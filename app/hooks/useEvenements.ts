@@ -20,7 +20,7 @@ type GetProps = {
 export const useEvenement = {
   getEvenement: function({ resultParams, filterParams }: GetProps) {
     const { data, isError, isPending, error } = useQuery({
-      queryKey: ["evenments"],
+      queryKey: ["evenments", filterParams],
       queryFn: async () => {
         const response = await axios.post(
           "http://localhost:3000/api/evenements",

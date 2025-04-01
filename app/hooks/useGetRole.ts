@@ -16,6 +16,9 @@ export type GetRoleType = {
     image_url: string,
     is_admin: string,
     lastname: string
+  },
+  role: {
+
   }
 };
 
@@ -27,7 +30,7 @@ type GetProps = {
 export const useGetRole = {
   getEvenement: function({ resultParams, filterParams }: GetProps) {
     const { data, isError, isPending, error } = useQuery({
-      queryKey: ["getRole"],
+      queryKey: ["getRole", filterParams],
       queryFn: async () => {
         const response = await axios.post(
           "http://localhost:3000/api/getRole",
