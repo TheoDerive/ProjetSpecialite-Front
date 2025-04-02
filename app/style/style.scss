@@ -3,7 +3,8 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap");
 
-* { margin: 0;
+* {
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
   color: unset;
@@ -188,7 +189,7 @@ main {
   position: absolute;
   top: 0;
   right: 0;
-  transition: right .7s;
+  transition: right 0.7s;
   width: 70%;
   max-width: 700px;
   background: vars.$white;
@@ -200,9 +201,9 @@ main {
   display: flex;
   flex-direction: column;
   gap: 50px;
-  animation: .5s evenement-information-appear;
+  animation: 0.5s evenement-information-appear;
 
-  &.remove{
+  &.remove {
     right: -100%;
   }
 
@@ -273,5 +274,100 @@ main {
       border-radius: 50%;
       background: grey;
     }
+  }
+}
+
+// User
+.user-page {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+
+  .user-page-title {
+    font-size: 40px;
+  }
+
+  .user-information-global {
+    display: flex;
+    align-items: end;
+    padding-bottom: 20px;
+    gap: 50px;
+  }
+
+  .user-information-global-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: grey;
+  }
+
+  .user-information-global-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    background: rgba($color: vars.$blue, $alpha: 0.4);
+    border: 2px solid vars.$blue;
+    color: vars.$dark;
+
+    .svg-inline--fa {
+      height: 30px;
+    }
+
+    .user-information-global-participation-title {
+      font-size: 14px;
+    }
+
+    .user-information-global-participation-number {
+      font-size: 20px;
+    }
+  }
+
+  .user-information-personnel-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .user-information-personnel, .user-information-personnel-mail-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    &.reverse-column {
+      flex-direction: row;
+      align-items: end;
+    }
+  }
+
+  .user-information-personnel-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .user-information-personnel-email-value, .user-information-personnel-value-password {
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 2px solid vars.$blue;
+    background: rgba($color: vars.$blue, $alpha: .2);
+    font-size: 16px;
+  }
+
+  button {
+    padding: 5px 15px;
+    font-size: 16px;
+    border-radius: 20px;
+    border: 2px solid vars.$blue;
+    color: vars.$white;
+    background: vars.$blue;
+    transition: background .5s;
+
+    &:hover {
+      background: vars.$white;
+      color: vars.$blue;
+    }
+    
   }
 }

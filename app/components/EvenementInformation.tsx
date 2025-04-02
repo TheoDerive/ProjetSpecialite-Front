@@ -1,4 +1,5 @@
 import React from "react";
+import { useAppStore } from "~/datas/store";
 import type { EvenementType } from "~/hooks/useEvenements";
 import { useGetRole, type GetRoleType } from "~/hooks/useGetRole";
 import { formatDate } from "~/utils/formatDate";
@@ -10,15 +11,39 @@ export default function EvenementInformation({
   evenement: EvenementType;
   updateEvenementSelect: (value: EvenementType | false) => void;
 }) {
+  const [userDemand, setUserDemand] = React.useState(false)
+  const [userCanDemand, setUserCanDemand] = React.useState(true)
+  const [membresRoles, setMembresRoles] = React.useState([])
   const containerRef = React.useRef<HTMLElement>(null);
+
+  const store = useAppStore()
 
   const date = new Date(evenement.date);
 
-  const { data, error, isPending } = useGetRole.getEvenement({
+  const { data, error, isPending } = useGetRole.getRoles({
     resultParams: [],
     filterParams: [{ name: "Id_Evenement", value: evenement.id }],
   });
-  const membresRoles: GetRoleType[] = data || [];
+
+  React.useEffect(() => {
+    setMembresRoles(data || [])
+
+    if(data !== undefined && store.user !== undefined){
+      const userHasDemand = data.filter((d: GetRoleType) => d.Id_Membre === store.user.id && d.is_valid === null)
+      console.log()
+      if(userHasDemand.length > 0){
+        setUserDemand(true)
+        setUserCanDemand(false)
+      }
+
+
+      const userCanDemand = data.filter((d: GetRoleType) => d.Id_Membre === store.user.id && d.is_valid !== null)
+    
+      if(userCanDemand.length > 0){
+        setUserCanDemand(false)
+      }
+    }
+  }, [data])
 
   function handleClick(event: MouseEvent) {
     if (containerRef && !containerRef.current?.contains(event.target as Node)) {
@@ -74,6 +99,24 @@ export default function EvenementInformation({
             </article>
           ) : null
         )}
+
+        {
+          userDemand ? 
+            <article className="evenement-information-membre">
+              <img
+                src={store.user?.image_url}
+                className="evenement-information-membre-image"
+              />
+              <p>
+                {store.user?.firstname} {store.user?.lastname} - En Attente
+              </p>
+            </article>
+            : null
+        }
+
+        {
+          userCanDemand ? <p>Demander</p> : null
+        }
       </section>
     </section>
   );

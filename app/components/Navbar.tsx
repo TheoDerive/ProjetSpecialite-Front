@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router";
+import { useAppStore } from "~/datas/store";
 
 type OngletsActiveType = {
   calendar: boolean;
@@ -15,6 +16,8 @@ export default function Navbar() {
   });
 
   const location = useLocation();
+
+  const store = useAppStore()
 
   React.useEffect(() => {
     let pathname = location.pathname.split("/")[1]
@@ -32,7 +35,7 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <img src="./" className="navbar-image" />
+      <img src={store.user?.image_url} className="navbar-image" />
 
       <ul className="navbar-onglets-container">
         <Link
