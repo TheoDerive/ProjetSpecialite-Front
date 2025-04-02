@@ -44,9 +44,9 @@ export default function Login() {
         email: data.value[0].email
       }
       store.setUser(newUser)
-      window.localStorage.setItem("user", JSON.stringify(newUser))
-
-      navigate("/") 
+      // window.localStorage.setItem("user", JSON.stringify(newUser))
+      //
+      // navigate("/") 
     },
     onError: (error) => {
       console.log("Login failed", error)

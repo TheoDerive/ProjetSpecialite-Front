@@ -51,7 +51,7 @@ export const apiMembre = {
     try {
       const response = await axios.patch(
         "http://localhost:3000/api/membres/update/email",
-        { id, email: newEmail }
+        { id, email: newEmail }, {withCredentials: true}
       );
       return response.data;
     } catch (error) {
