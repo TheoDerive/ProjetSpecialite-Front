@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router";
 import { useAppStore } from "~/datas/store";
+import { useAccount } from "~/hooks/useAccount";
 
 type OngletsActiveType = {
   calendar: boolean;
@@ -15,9 +16,10 @@ export default function Navbar() {
     admin: false,
   });
 
+  const { account } = useAccount()
+
   const location = useLocation();
 
-  const store = useAppStore()
 
   React.useEffect(() => {
     let pathname = location.pathname.split("/")[1]
@@ -35,7 +37,7 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <img src={store.user?.image_url} className="navbar-image" />
+      <img src={account.image_url} className="navbar-image" />
 
       <ul className="navbar-onglets-container">
         <Link
@@ -53,6 +55,19 @@ export default function Navbar() {
         >
           <img src="/icons/user.svg" />
         </Link>
+
+        {
+          account.is_admin !== null ?
+
+        <Link
+          to={"/admin"}
+          className={`navbar-onglet ${ongletsActive.admin ? "navbar-onglet-active" : ""
+            }`}
+        >
+          <img src="/icons/admin.svg" />
+        </Link>
+        : null
+        }
       </ul>
     </header>
   );

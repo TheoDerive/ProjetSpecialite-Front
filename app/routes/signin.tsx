@@ -4,7 +4,8 @@ import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiMembre, type MembreType } from "~/hooks/apiMembre";
 import { useAppStore } from "~/datas/store";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuth, type Me } from "~/hooks/useAuth";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
@@ -12,7 +13,7 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 export default function Login() {
   const [show, setShow] = React.useState(false);
 
-  const [login, setLogin] = React.useState({
+  const [log, setLogin] = React.useState({
     firstname: "",
     lastname: "",
     image_url: "/",
@@ -27,31 +28,29 @@ export default function Login() {
   const emailInputRef = React.useRef<HTMLInputElement>(null);
   const passwordInputRef = React.useRef<HTMLInputElement>(null);
 
-  const store = useAppStore();
-  const navigate = useNavigate();
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
   const mutation = useMutation({
     mutationFn: async () =>
       apiMembre.signIn({
-        firstname: login.firstname,
-        lastname: login.lastname,
-        email: login.email,
-        password: login.password,
+        firstname: log.firstname,
+        lastname: log.lastname,
+        email: log.email,
+        password: log.password,
       }),
     onSuccess: (data) => {
-      console.log("Login success", data);
-      const newUser: MembreType = {
-        id: data.id,
+      const newUser: Me = {
+        Id_Membre: data.id,
         firstname: data.firstname,
         lastname: data.lastname,
         is_admin: data.is_admin,
         image_url: data.image_url,
         email: data.email,
       };
-      store.setUser(newUser);
-      window.localStorage.setItem("user", JSON.stringify(newUser));
 
-      navigate("/");
+      login(newUser)
+      navigate("/")
     },
     onError: (error) => {
       console.log("Login failed", error);
@@ -66,7 +65,7 @@ export default function Login() {
     setError({ for: "", message: "" });
 
     // Handle Error
-    if (login.firstname === "") {
+    if (log.firstname === "") {
       setError({
         for: "firstname",
         message: "Veuillez renseigner votre prenom",
@@ -74,7 +73,7 @@ export default function Login() {
 
       return;
     }
-    if (login.lastname === "") {
+    if (log.lastname === "") {
       setError({
         for: "lastname",
         message: "Veuillez renseigner votre nom",
@@ -83,14 +82,14 @@ export default function Login() {
       return;
     }
 
-    if (login.email === "") {
+    if (log.email === "") {
       setError({
         for: "email",
         message: "Veuillez renseigner votre adresse email",
       });
 
       return;
-    } else if (emailRegex.test(login.email) === false) {
+    } else if (emailRegex.test(log.email) === false) {
       setError({
         for: "email",
         message: "Veuillez renseigner une adresse email valide",
@@ -99,14 +98,14 @@ export default function Login() {
       return;
     }
 
-    if (login.password.length < 8) {
+    if (log.password.length < 8) {
       setError({
         for: "password",
         message: "Veuillez renseigner un mot de passe de 8 charactere minimum",
       });
 
       return;
-    } else if (passwordRegex.test(login.password) === false) {
+    } else if (passwordRegex.test(log.password) === false) {
       setError({
         for: "password",
         message:
@@ -125,7 +124,7 @@ export default function Login() {
 
   return (
     <main>
-      <section className="form-container">
+      <section className="form-container" style={{ height: "50%"}}>
         <form className="login-form" onSubmit={handleLogin}>
           <label>
             {error.for === "firstname" ? <p>{error.message}</p> : null}
@@ -134,10 +133,10 @@ export default function Login() {
               className="firstname-input"
               placeholder="Prenom"
               type="text"
-              value={login.firstname}
+              value={log.firstname}
               onChange={(e) => {
                 setLogin({
-                  ...login,
+                  ...log,
                   firstname: e.target.value,
                 });
               }}
@@ -151,10 +150,10 @@ export default function Login() {
               className="lastname-input"
               placeholder="Nom"
               type="text"
-              value={login.lastname}
+              value={log.lastname}
               onChange={(e) => {
                 setLogin({
-                  ...login,
+                  ...log,
                   lastname: e.target.value,
                 });
               }}
@@ -168,10 +167,10 @@ export default function Login() {
               className="email-input"
               placeholder="Email"
               type="email"
-              value={login.email}
+              value={log.email}
               onChange={(e) => {
                 setLogin({
-                  ...login,
+                  ...log,
                   email: e.target.value,
                 });
               }}
@@ -185,10 +184,10 @@ export default function Login() {
               className="email-input"
               placeholder="Mot de passe"
               type={show ? "text" : "password"}
-              value={login.password}
+              value={log.password}
               onChange={(e) => {
                 setLogin({
-                  ...login,
+                  ...log,
                   password: e.target.value,
                 });
               }}
@@ -200,6 +199,7 @@ export default function Login() {
             Se connecter
           </button>
         </form>
+        <Link to={"/login"}>Se connecter</Link>
       </section>
     </main>
   );

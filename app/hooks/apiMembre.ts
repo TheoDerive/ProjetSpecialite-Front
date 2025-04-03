@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { Me } from "./useAuth";
 
 export type MembreType = {
   id: number;
@@ -21,15 +22,58 @@ type SigninProps = {
   password: string
 };
 
+type GetProps = {
+  resultParams: string[];
+  filterParams: { name: string; value: string | number }[];
+};
+
 export const apiMembre = {
   login: async function ({ email, password }: LoginProps) {
     try {
       console.log(email, password)
       const response = await axios.post(
         "http://localhost:3000/api/membres/login",
-        { email, password }
+        { email, password }, { withCredentials: true}
       );
       return response.data;
+    } catch (error) {
+      console.error("Erreur API :", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  logout: async function ({ id } : { id: number }) {
+    try {
+      const response = await axios.patch(
+        "http://localhost:3000/api/membres/logout",
+        { id }, { withCredentials: true}
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erreur API :", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  getMembres: async function ({ filterParams, resultParams }: GetProps) {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/membres",
+        { resultParams, filterParams }, { withCredentials: true}
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erreur API :", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  getMe: async function() {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/membres/me",
+        { withCredentials: true}
+      );
+  console.log("get")
+      return response.data as Me;
     } catch (error) {
       console.error("Erreur API :", error.response?.data || error.message);
       throw error;
@@ -39,7 +83,8 @@ export const apiMembre = {
     try {
       const response = await axios.post(
         "http://localhost:3000/api/membres/signin",
-        { email, firstname, lastname, password, is_admin: false, image_url: "/" }
+        { email, firstname, lastname, password, is_admin: false, image_url: "/" },
+        { withCredentials: true}
       );
       return response.data;
     } catch (error) {
@@ -52,6 +97,30 @@ export const apiMembre = {
       const response = await axios.patch(
         "http://localhost:3000/api/membres/update/email",
         { id, email: newEmail }, {withCredentials: true}
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erreur API :", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  updatePassword: async function ({ id, old_password, password }: {id: number, old_password: string, password: string}){
+    try {
+      const response = await axios.patch(
+        "http://localhost:3000/api/membres/update/password",
+        { id, old_password, password }, {withCredentials: true}
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erreur API :", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  delete: async function ({ id}: {id: number}){
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/membres/${id}`,
+        { withCredentials: true }
       );
       return response.data;
     } catch (error) {

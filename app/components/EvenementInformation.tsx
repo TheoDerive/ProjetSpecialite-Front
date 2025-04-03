@@ -3,66 +3,87 @@ import { useAppStore } from "~/datas/store";
 import type { EvenementType } from "~/hooks/useEvenements";
 import { useGetRole, type GetRoleType } from "~/hooks/useGetRole";
 import { formatDate } from "~/utils/formatDate";
+import AskRole from "./AskRole";
+import { useQuery } from "@tanstack/react-query";
+import SetUserRole from "./Admin/setUserRole";
+import { useAccount } from "~/hooks/useAccount";
 
 export default function EvenementInformation({
   evenement,
   updateEvenementSelect,
+  setDemanding,
 }: {
   evenement: EvenementType;
   updateEvenementSelect: (value: EvenementType | false) => void;
+  setDemanding: (value: boolean) => void;
 }) {
-  const [userDemand, setUserDemand] = React.useState(false)
-  const [userCanDemand, setUserCanDemand] = React.useState(true)
-  const [membresRoles, setMembresRoles] = React.useState([])
+  const [userDemand, setUserDemand] = React.useState<{name: string, value: GetRoleType[]}[]>([]);
+  const [userCanDemand, setUserCanDemand] = React.useState(true);
+  const [membresRoles, setMembresRoles] = React.useState([]);
   const containerRef = React.useRef<HTMLElement>(null);
 
-  const store = useAppStore()
+  const { account } = useAccount()
 
   const date = new Date(evenement.date);
 
-  const { data, error, isPending } = useGetRole.getRoles({
-    resultParams: [],
-    filterParams: [{ name: "Id_Evenement", value: evenement.id }],
+  const { data, error, isPending } = useQuery({
+    queryKey: ["id", evenement],
+    queryFn: async function () {
+      const result = await useGetRole.getRoles({
+        resultParams: [],
+        filterParams: [{ name: "Id_Evenement", value: evenement.id }],
+        needFetch: true,
+      });
+      return result;
+    },
+    enabled: Boolean(evenement?.id),
   });
 
   React.useEffect(() => {
-    setMembresRoles(data || [])
+    setMembresRoles(data || []);
 
-    if(data !== undefined && store.user !== undefined){
-      const userHasDemand = data.filter((d: GetRoleType) => d.Id_Membre === store.user.id && d.is_valid === null)
-      console.log()
-      if(userHasDemand.length > 0){
-        setUserDemand(true)
-        setUserCanDemand(false)
+    if (data !== undefined && account !== undefined) {
+      const userHasDemand = data.filter(
+        (d: GetRoleType) => d.is_valid === null
+      );
+      if (userHasDemand.length > 0) {
+        const result = [] as { name: string; value: GetRoleType[] }[];
+
+        userHasDemand.forEach((role: GetRoleType) => {
+          // Cherche si un utilisateur existe déjà dans result
+          const existingUser = result.find(
+            (r) => r.name === `${role.membre.firstname} ${role.membre.lastname}`
+          );
+
+          if (existingUser) {
+            // Si l'utilisateur existe, on ajoute le rôle dans 'value'
+            existingUser.value.push(role);
+          } else {
+            // Si l'utilisateur n'existe pas, on crée un nouvel utilisateur dans result
+            result.push({
+              name: `${role.membre.firstname} ${role.membre.lastname}`,
+              value: [role], // On met le premier rôle dans un tableau
+            });
+          }
+        });
+        setUserDemand(result);
+
       }
 
+      const userDemand = data.filter((d: GetRoleType) => d.Id_Membre === account.Id_Membre)
 
-      const userCanDemand = data.filter((d: GetRoleType) => d.Id_Membre === store.user.id && d.is_valid !== null)
-    
-      if(userCanDemand.length > 0){
-        setUserCanDemand(false)
+      if(userDemand.length > 0) {
+          setUserCanDemand(false)
       }
+
     }
-  }, [data])
-
-  function handleClick(event: MouseEvent) {
-    if (containerRef && !containerRef.current?.contains(event.target as Node)) {
-      containerRef.current.classList.add("remove");
-
-      setTimeout(() => {
-        updateEvenementSelect(false);
-      }, 500);
-    }
-  }
-
-  React.useEffect(() => {
-    document.addEventListener("click", handleClick);
-
-    return () => document.removeEventListener("click", handleClick);
-  }, []);
+  }, [data]);
 
   return (
     <section className="evenement-information-container" ref={containerRef}>
+      <span className="close" onClick={() => updateEvenementSelect(false)}>
+        close
+      </span>
       <div
         className={`evenement-information-category ${evenement.type_eventName}`}
       >
@@ -94,29 +115,35 @@ export default function EvenementInformation({
               />
               <p>
                 {membreRole.membre.firstname} {membreRole.membre.lastname} -{" "}
-                {membreRole.Id_roles}
+                {membreRole.roleName.name}
               </p>
             </article>
           ) : null
         )}
 
-        {
-          userDemand ? 
-            <article className="evenement-information-membre">
-              <img
-                src={store.user?.image_url}
-                className="evenement-information-membre-image"
-              />
+        {userDemand.map((user) => (
+          <article className="evenement-information-membre">
+            <img
+              src={user.value[0].membre.image_url}
+              className="evenement-information-membre-image"
+            />
+            <div>
               <p>
-                {store.user?.firstname} {store.user?.lastname} - En Attente
+                {user.name} - En Attente
               </p>
-            </article>
-            : null
-        }
+              <p>{
+                user.value.map(r => `${r.roleName.name} -`)
+              }</p>
+            </div>
+            {
+              account.is_admin !== null ? <SetUserRole getRoleInfo={user.value}  /> : null
+            }
+          </article>
+        ))}
 
-        {
-          userCanDemand ? <p>Demander</p> : null
-        }
+        {userCanDemand ? (
+          <p onClick={() => setDemanding(true)}>Demander</p>
+        ) : null}
       </section>
     </section>
   );

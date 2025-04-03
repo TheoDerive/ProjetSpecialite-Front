@@ -5,18 +5,34 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigate,
 } from "react-router";
 import type { Route } from "./+types/root";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./style/style.scss";
-import Navbar from "./components/Navbar";
+import { AuthStatus, useAuth } from "./hooks/useAuth";
+import React from "react";
 
 export const links: Route.LinksFunction = () => [];
 
 const queryClient = new QueryClient();
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { status, authenticate } = useAuth();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    authenticate();
+  }, []);
+
+  React.useEffect(() => {
+    console.log(status);
+    if (status === AuthStatus.Guest) {
+      navigate("/login");
+    }
+  }, [status]);
+
   return (
     <html lang="fr">
       <head>
@@ -27,7 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          {children}
+          {status === AuthStatus.Unknow ? <p>Loading...</p> : <>{children}</>}
           <ScrollRestoration />
           <Scripts />
         </QueryClientProvider>

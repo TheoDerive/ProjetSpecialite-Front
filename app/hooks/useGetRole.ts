@@ -12,7 +12,10 @@ export type GetRoleType = {
   is_valid: number | null;
   evenement: EvenementType;
   membre: MembreType;
-  role: {};
+  roleName: {
+    name: string,
+    id: number
+  };
 };
 
 type GetProps = {
@@ -20,6 +23,14 @@ type GetProps = {
   filterParams: { name: string; value: string | number }[];
   needFetch?: boolean
 };
+
+type addProps = {
+  Id_Membre: number,
+  Id_roles: number,
+  Id_Evenement: number,
+  date: string,
+  isvalid: null
+}
 
 export const useGetRole = {
   getRoles: async function ({ resultParams, filterParams, needFetch }: GetProps) {
@@ -30,4 +41,21 @@ export const useGetRole = {
     });
     return response.data;
   },
+
+  addRoles: async function ({ Id_roles, Id_Membre, isvalid, Id_Evenement, date  }: addProps) {
+    const response = await axios.post("http://localhost:3000/api/getRole/new", {
+      Id_Membre,
+      Id_roles,
+      Id_Evenement,
+      isvalid,
+      date
+    });
+    return response.data;
+  },
+
+  updateRole: async function({id}: {id: number}){
+    const res = await axios.patch(`http://localhost:3000/api/getRole/isvalid/${id}`)
+
+    return res
+  }
 };
