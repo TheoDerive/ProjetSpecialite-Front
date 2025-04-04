@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { useAppStore } from "~/datas/store";
+import { useAccount } from "~/hooks/useAccount";
 import { useEvenement, type EvenementType } from "~/hooks/useEvenements";
 
 export default function AddEvent({
@@ -31,11 +32,6 @@ export default function AddEvent({
       document.removeEventListener("contextmenu", handleClick);
     };
   }, [elementRef]);
-
-  React.useEffect(() => {
-    console.log(store.newEvent)
-  }, [store.newEvent]);
-
 
   const addNewEvent = () => {
     if(!elementRef.current) return

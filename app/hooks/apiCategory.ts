@@ -12,7 +12,7 @@ type GetProps = {
 
 export const apiCategory = {
   getCategory: async function({resultParams, filterParams} : GetProps){
-    const category = await axios.post("http://localhost:3000/api/category", {
+    const category = await axios.post("http://projetspe.theo-derive.mds-bordeaux.yt/api/category", {
       resultParams,
       filterParams
     })

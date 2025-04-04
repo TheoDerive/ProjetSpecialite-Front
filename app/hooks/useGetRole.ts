@@ -34,7 +34,7 @@ type addProps = {
 
 export const useGetRole = {
   getRoles: async function ({ resultParams, filterParams, needFetch }: GetProps) {
-    const response = await axios.post("http://localhost:3000/api/getRole", {
+    const response = await axios.post("http://projetspe.theo-derive.mds-bordeaux.yt/api/getRole", {
       resultParams: resultParams,
       filterParams: filterParams,
       needFetch: needFetch || false
@@ -43,7 +43,7 @@ export const useGetRole = {
   },
 
   addRoles: async function ({ Id_roles, Id_Membre, isvalid, Id_Evenement, date  }: addProps) {
-    const response = await axios.post("http://localhost:3000/api/getRole/new", {
+    const response = await axios.post("http://projetspe.theo-derive.mds-bordeaux.yt/api/getRole/new", {
       Id_Membre,
       Id_roles,
       Id_Evenement,
@@ -54,7 +54,7 @@ export const useGetRole = {
   },
 
   updateRole: async function({id}: {id: number}){
-    const res = await axios.patch(`http://localhost:3000/api/getRole/isvalid/${id}`)
+    const res = await axios.patch(`http://projetspe.theo-derive.mds-bordeaux.yt/api/getRole/isvalid/${id}`)
 
     return res
   }

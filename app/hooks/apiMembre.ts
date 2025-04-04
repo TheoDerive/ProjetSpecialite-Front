@@ -32,7 +32,7 @@ export const apiMembre = {
     try {
       console.log(email, password)
       const response = await axios.post(
-        "http://localhost:3000/api/membres/login",
+        "http://projetspe.theo-derive.mds-bordeaux.yt/api/membres/login",
         { email, password }, { withCredentials: true}
       );
       return response.data;
@@ -44,7 +44,7 @@ export const apiMembre = {
   logout: async function ({ id } : { id: number }) {
     try {
       const response = await axios.patch(
-        "http://localhost:3000/api/membres/logout",
+        "http://projetspe.theo-derive.mds-bordeaux.yt/api/membres/logout",
         { id }, { withCredentials: true}
       );
       return response.data;
@@ -57,7 +57,7 @@ export const apiMembre = {
   getMembres: async function ({ filterParams, resultParams }: GetProps) {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/membres",
+        "http://projetspe.theo-derive.mds-bordeaux.yt/api/membres",
         { resultParams, filterParams }, { withCredentials: true}
       );
       return response.data;
@@ -69,7 +69,7 @@ export const apiMembre = {
   getMe: async function() {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/membres/me",
+        "http://projetspe.theo-derive.mds-bordeaux.yt/api/membres/me",
         { withCredentials: true}
       );
   console.log("get")
@@ -82,7 +82,7 @@ export const apiMembre = {
   signIn: async function ({ firstname, lastname, email, password }: SigninProps) {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/membres/signin",
+        "http://projetspe.theo-derive.mds-bordeaux.yt/api/membres/signin",
         { email, firstname, lastname, password, is_admin: false, image_url: "/" },
         { withCredentials: true}
       );
@@ -95,7 +95,7 @@ export const apiMembre = {
   updateEmail: async function ({ id, newEmail }: {id: number, newEmail: string}){
     try {
       const response = await axios.patch(
-        "http://localhost:3000/api/membres/update/email",
+        "http://projetspe.theo-derive.mds-bordeaux.yt/api/membres/update/email",
         { id, email: newEmail }, {withCredentials: true}
       );
       return response.data;
@@ -107,7 +107,7 @@ export const apiMembre = {
   updatePassword: async function ({ id, old_password, password }: {id: number, old_password: string, password: string}){
     try {
       const response = await axios.patch(
-        "http://localhost:3000/api/membres/update/password",
+        "http://projetspe.theo-derive.mds-bordeaux.yt/api/membres/update/password",
         { id, old_password, password }, {withCredentials: true}
       );
       return response.data;
@@ -119,7 +119,7 @@ export const apiMembre = {
   delete: async function ({ id}: {id: number}){
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/membres/${id}`,
+        `http://projetspe.theo-derive.mds-bordeaux.yt/api/membres/${id}`,
         { withCredentials: true }
       );
       return response.data;

@@ -12,7 +12,7 @@ type GetProps = {
 
 export const apiTypeEvent = {
   getTypeEvent: async function({resultParams, filterParams} : GetProps){
-    const typeEvents = await axios.post("http://localhost:3000/api/typesevents", {
+    const typeEvents = await axios.post("http://projetspe.theo-derive.mds-bordeaux.yt/api/typesevents", {
       resultParams,
       filterParams
     })

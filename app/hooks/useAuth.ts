@@ -33,13 +33,12 @@ export const useAuth = () => {
 
     default:
       status = AuthStatus.Authentificated
-      console.log("e")
       break;
   }
 
   const authenticate = React.useCallback(async () => {
     await apiMembre.getMe()
-    .then(data => console.log(data))
+    .then(setAccount)
     .catch(() => setAccount(null))
   }, [])
 

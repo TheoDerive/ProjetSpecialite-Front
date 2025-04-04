@@ -9,6 +9,7 @@ import { useAppStore } from "~/datas/store";
 import AddEvent from "./Admin/AddEvent";
 import CreateEvent from "./Admin/CreateEvent";
 import { useQuery } from "@tanstack/react-query";
+import { useAccount } from "~/hooks/useAccount";
 
 export default function Calendrier() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
@@ -28,6 +29,7 @@ export default function Calendrier() {
     },
   });
   const store = useAppStore();
+  const { account } = useAccount()
 
   const evenements = data || [];
 
@@ -139,7 +141,7 @@ export default function Calendrier() {
   function appendAddProject(day: number, e: MouseEvent, event: []) {
     e.preventDefault();
 
-    if (store.user?.is_admin === null) return;
+    if (account.is_admin === null) return;
 
     const htmlElement = e.target as HTMLElement;
     const container = document.createElement("div");

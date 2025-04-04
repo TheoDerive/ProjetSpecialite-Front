@@ -28,7 +28,7 @@ export type newEvent = {
 
 export const useEvenement = {
   getEvenement: async function ({ resultParams, filterParams }: GetProps) {
-    const response = await axios.post("http://localhost:3000/api/evenements", {
+    const response = await axios.post("http://projetspe.theo-derive.mds-bordeaux.yt/api/evenements", {
       resultParams: resultParams,
       filterParams: filterParams,
     });
@@ -43,7 +43,7 @@ export const useEvenement = {
     Id_type_event,
   }: newEvent) {
     const now = new Date();
-    const res = await axios.post("http://localhost:3000/api/evenements/new", {
+    const res = await axios.post("http://projetspe.theo-derive.mds-bordeaux.yt/api/evenements/new", {
       Name,
       date,
       desc_,
@@ -57,7 +57,7 @@ export const useEvenement = {
   },
   deleteEvenement: async function ({ id }: { id: number }) {
     const response = await axios.delete(
-      `http://localhost:3000/api/evenements/${id}`
+      `http://projetspe.theo-derive.mds-bordeaux.yt/api/evenements/${id}`
     );
 
     if (response.status === 200) {

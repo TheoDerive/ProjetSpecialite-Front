@@ -10,14 +10,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const store = useAppStore();
-
-  // React.useEffect(() => {
-  //   store.setUser(getLocalhost("user"))
-  // }, []);
-
-  console.log(store)
-
   return (
     <>
       <Navbar />
